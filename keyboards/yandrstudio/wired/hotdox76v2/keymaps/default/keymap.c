@@ -1,10 +1,10 @@
 #include QMK_KEYBOARD_H
 
 enum Layer_name {
-    HOME,
+    BASE,   //HOME,
     CODE,
-    OFFICE,
-    OTHER
+    BUREAU, //OFFICE,
+    AUTRES  //OTHER
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {

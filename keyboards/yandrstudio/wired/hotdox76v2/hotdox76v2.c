@@ -5,12 +5,9 @@
 #include "oled_font_lib/logo2.h"
 #include "oled_font_lib/ext_font.h"
 
-
-
-
 bool is_keyboard_left(void) {
 
-#ifdef I_AM_LEFT
+#if defined(I_AM_LEFT)
     return true;
 #else
     return false;
@@ -19,7 +16,7 @@ bool is_keyboard_left(void) {
 }
 
 
-#ifdef RGB_MATRIX_ENABLE
+#if defined(RGB_MATRIX_ENABLE)
 led_config_t g_led_config = {
     {
         { NO_LED, 34, 33, 32, 35, 37, 36     },
@@ -71,7 +68,7 @@ led_config_t g_led_config = {
 
 
 
-#ifdef OLED_ENABLE
+#if defined(OLED_ENABLE)
 
 #   define UNC (94+0x21)
 typedef struct _master_to_slave_t {
@@ -103,7 +100,7 @@ oled_rotation_t oled_init_kb(oled_rotation_t rotation) {
 
     s2m.cur_alp_index = 1;
 
-#   ifdef I_AM_LEFT
+#   if defined(I_AM_LEFT)
         return OLED_ROTATION_180;
 #   else
         return OLED_ROTATION_0;
@@ -115,7 +112,7 @@ void render_logo(void) {
     uint8_t i = 0, j = 0;
     for (i = 0; i < 4; ++i) {
         for (j = 0; j < 32; ++j) {
-#   ifdef I_AM_LEFT
+#   if defined(I_AM_LEFT)
             oled_write_raw_byte(pgm_read_byte(&logo_mouse[i*32+j]), i*128+j);
 #   else
             oled_write_raw_byte(pgm_read_byte(&logo_mouse[i*32+j]), i*128+j+96);
@@ -124,7 +121,7 @@ void render_logo(void) {
     }
 }
 
-#   ifdef I_AM_LEFT
+#   if defined(I_AM_LEFT) || defined(DISABLE_KEY_DISPLAY)
 void render_layer_helper_fun(uint8_t start_line, const char * data, uint8_t gap_w, uint8_t l) {
     uint8_t j = 0, k = 0;
     for (j = 0; j < l; ++j) { // font index
@@ -144,27 +141,27 @@ void render_layer_helper_fun(uint8_t start_line, const char * data, uint8_t gap_
     }
 }
 void render_layer(uint8_t layer) {
-    render_layer_helper_fun(0, PSTR("LAYER:"), 12, 6);
+    render_layer_helper_fun(0, PSTR("COUCHE"), 12, 6);
     switch (layer) {
     case 0:
-        render_layer_helper_fun(1, PSTR("1:HOME"), 12, 6);
+        render_layer_helper_fun(1, PSTR("1:BASE"), 12, 6);
         break;
     case 1:
         render_layer_helper_fun(1, PSTR("2:CODE"), 12, 6);
         break;
     case 2:
-        render_layer_helper_fun(1, PSTR("3:OFFICE"), 0, 8);
+        render_layer_helper_fun(1, PSTR("3:BUREAU"), 0, 8);
         break;
     case 3:
     default:
-        render_layer_helper_fun(1, PSTR("4:OTHERS"), 0, 8);
+        render_layer_helper_fun(1, PSTR("4:AUTRES"), 0, 8);
         break;
     }
 }
 
 # endif
 
-#   ifndef I_AM_LEFT
+#   if !defined(I_AM_LEFT) && !defined(DISABLE_KEY_DISPLAY)
 
 void render_cur_input_helper_fun(uint8_t start_line, const char * data, uint8_t gap_w, uint8_t l) {
     uint8_t j = 0, k = 0;
@@ -185,7 +182,7 @@ void render_cur_input_helper_fun(uint8_t start_line, const char * data, uint8_t 
 }
 
 void render_cur_input(void) {
-    render_cur_input_helper_fun(0, "INPUTS:", 6, 7);
+    render_cur_input_helper_fun(0, "ENTREES", 6, 7);
     if (is_keyboard_master()) {
         render_cur_input_helper_fun(1, (const char *)(m2s.current_alp), 12, 6);
     } else {
@@ -198,7 +195,7 @@ void render_cur_input(void) {
 
 bool oled_task_kb(void) {
     render_logo();
-#   ifdef I_AM_LEFT
+#   if defined(I_AM_LEFT) || defined(DISABLE_KEY_DISPLAY)
     render_layer(biton32(layer_state));
 #   else
     render_cur_input();
@@ -299,9 +296,9 @@ void housekeeping_task_user(void) {
         if (timer_elapsed32(last_sync) > 200) {
             if(transaction_rpc_exec(KEYBOARD_CURRENT_ALPA_SYNC, sizeof(m2s), &m2s, sizeof(s2m), &s2m)) {
                 last_sync = timer_read32();
-                dprint("Slave sync successed!\n");
+                dprint("Aux sync successed!\n");
             } else {
-                dprint("Slave sync failed!\n");
+                dprint("Aux sync failed!\n");
             }
         }
     }
