@@ -14,7 +14,7 @@ bool is_keyboard_left(void) {
 #endif
 
 }
-
+#define DISABLE_KEY_DISPLAY
 
 #if defined(RGB_MATRIX_ENABLE)
 led_config_t g_led_config = {
@@ -122,21 +122,28 @@ void render_logo(void) {
 }
 
 #   if defined(I_AM_LEFT) || defined(DISABLE_KEY_DISPLAY)
+
+#if defined(I_AM_LEFT)
+#define LINE_START_IDX 32
+#else
+#define LINE_START_IDX 0
+#endif
+
 void render_layer_helper_fun(uint8_t start_line, const char * data, uint8_t gap_w, uint8_t l) {
     uint8_t j = 0, k = 0;
     for (j = 0; j < l; ++j) { // font index
         for (k = 0; k < 12; ++k) { // font byte index
             //                                        base + logo_w(32) + gap_w(12) +l*font_w(12)+current_byte_index
-            oled_write_raw_byte(pgm_read_byte(&ext_big_font[pgm_read_byte(&data[j])-0x21][k]), start_line*2*128 + 32 + gap_w + j*12+k);
-            oled_write_raw_byte(pgm_read_byte(&ext_big_font[pgm_read_byte(&data[j])-0x21][k+12]), start_line*2*128+128 + 32 + gap_w + j*12+k);
+            oled_write_raw_byte(pgm_read_byte(&ext_big_font[pgm_read_byte(&data[j])-0x21][k]), start_line*2*128 + LINE_START_IDX + gap_w + j*12+k);
+            oled_write_raw_byte(pgm_read_byte(&ext_big_font[pgm_read_byte(&data[j])-0x21][k+12]), start_line*2*128+128 + LINE_START_IDX + gap_w + j*12+k);
         }
     }
     for (j = 0; j < gap_w; ++j) {
-        oled_write_raw_byte(pgm_read_byte(&blank_block), start_line*2*128 + 32 + j);
-        oled_write_raw_byte(pgm_read_byte(&blank_block), start_line*2*128 + 32 + gap_w + l*12 + j);
+        oled_write_raw_byte(pgm_read_byte(&blank_block), start_line*2*128 + LINE_START_IDX + j);
+        oled_write_raw_byte(pgm_read_byte(&blank_block), start_line*2*128 + LINE_START_IDX + gap_w + l*12 + j);
 
-        oled_write_raw_byte(pgm_read_byte(&blank_block), start_line*2*128+128 + 32 + j);
-        oled_write_raw_byte(pgm_read_byte(&blank_block), start_line*2*128+128 + 32 + gap_w + l*12 + j);
+        oled_write_raw_byte(pgm_read_byte(&blank_block), start_line*2*128+128 + LINE_START_IDX + j);
+        oled_write_raw_byte(pgm_read_byte(&blank_block), start_line*2*128+128 + LINE_START_IDX + gap_w + l*12 + j);
 
     }
 }
