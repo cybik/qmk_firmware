@@ -12,6 +12,7 @@
         "mousekey": true,
         "nkro": true,
         "oled": true,
+        "key_display": false,
         "rgb_matrix": true
     },
     "build": {
