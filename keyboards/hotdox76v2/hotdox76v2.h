@@ -7,5 +7,3 @@
 #include "quantum.h"
 
 #define TOG_OLED KC_F13
-
-bool disable_key_display(void);
