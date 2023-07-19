@@ -110,9 +110,10 @@ void render_logo(void) {
     }
 }
 
+#define LINE_START_IDX (is_keyboard_left()?32:0)
+
 void render_layer_helper_fun(uint8_t start_line, const char *data, uint8_t gap_w, uint8_t l) {
-    uint8_t j = 0, k = 0;
-    uint8_t line_start_idx = (is_keyboard_left()?32:0);
+    uint8_t j = 0, k = 0, line_start_idx = (is_keyboard_left()?32:0);
     for (j = 0; j < l; ++j) {      // font index
         for (k = 0; k < 12; ++k) { // font byte index
             //                                        base + logo_w(32) + gap_w(12) +l*font_w(12)+current_byte_index
@@ -175,20 +176,18 @@ void render_cur_input(void) {
     return;
 }
 
-bool disable_key_display() {
 #ifdef DISABLE_KEY_DISPLAY
-    return true;
+#   define DISABLED_KEY_DISPLAY true
 #else
-    return false;
+#   define DISABLED_KEY_DISPLAY false
 #endif
-}
 
 bool oled_task_kb(void) {
     if (!oled_task_user()) {
         return false;
     }
     render_logo();
-    if (is_keyboard_left() || disable_key_display()) {
+    if (is_keyboard_left() || DISABLED_KEY_DISPLAY) {
         render_layer(biton32(layer_state));
     } else {
         render_cur_input();
