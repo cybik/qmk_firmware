@@ -1,5 +1,11 @@
-# hotdox76
+# hotdox76 cybik variant
 
+My defaults and added functionality
+
+* VIA by default
+* Don't show keys on the LCDs
+
+## Original doc
 *An Ergodox style keyboard with per key RGB.*
 
 * Keyboard Maintainer: [Drashna Jael're](https://github.com/Drashna Jael're)
@@ -16,7 +22,7 @@ Flashing example for this keyboard:
 
 See the [build environment setup](https://docs.qmk.fm/#/getting_started_build_tools) and the [make instructions](https://docs.qmk.fm/#/getting_started_make_guide) for more information. Brand new to QMK? Start with our [Complete Newbs Guide](https://docs.qmk.fm/#/newbs).
 
-## Bootloader
+### Bootloader
 
 Enter the bootloader in 3 ways:
 
